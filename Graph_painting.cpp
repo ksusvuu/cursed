@@ -74,7 +74,7 @@ void Graph::print_chromatic_number() {
 };
 
 void Graph::chromatic_number() {
-  int result[V];
+  std::vector<int> result(V);
   // Assign the first color to first vertex
   result[0] = 0;
   // Initialize remaining V-1 vertices as unassigned
@@ -85,7 +85,7 @@ void Graph::chromatic_number() {
   // A temporary array to store the available colors. True
   // value of available[cr] would mean that the color cr is
   // assigned to one of its adjacent vertices
-  bool available[V];
+  std::vector<bool> available(V);
   for (int cr = 0; cr < V; cr++) {
     available[cr] = false;
   }
@@ -150,7 +150,7 @@ void Graph::print_matrix() {
 // Assigns colors (starting from 0) to all vertices
 // the assignment of colors
 void Graph::greedy_coloring() {
-  int result[V];
+  std::vector<int> result(V);
   // Assign the first color to first vertex
   result[0] = 0;
   // Initialize remaining V-1 vertices as unassigned
@@ -161,7 +161,7 @@ void Graph::greedy_coloring() {
   // A temporary array to store the available colors. True
   // value of available[cr] would mean that the color cr is
   // assigned to one of its adjacent vertices
-  bool available[V];
+  std::vector<bool> available(V);
   for (int cr = 0; cr < V; cr++) {
     available[cr] = false;
   }
