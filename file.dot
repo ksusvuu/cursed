@@ -1,4 +1,4 @@
-graph Graph_сoloring { 
+graph Graph_coloring { 
 	node [shape=circle width=0.66 style=filled]
 	0 [color = magenta label="0"]
 	1 [color = blue label="1"]
