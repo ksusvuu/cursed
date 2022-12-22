@@ -23,14 +23,14 @@ int main(int argc, char* argv[]) {
   // создание графа
   Graph test_graph(argv[1]);
   cout << "Coloring of graph" << endl;
+  test_graph.print_matrix();
 
   // поиск минимального количества цветов
   test_graph.greedy_coloring();
   test_graph.find_chromatic_number();
-  test_graph.print_matrix();
-  test_graph.export_graph(argv[2]);
-
   cout << "Chromatic number: " << test_graph.chromatic_number() << endl;
+
+  test_graph.export_graph(argv[2]);
 
   return 0;
 }

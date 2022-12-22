@@ -6,9 +6,9 @@ Graph::Graph(const std::string& matrix_filename) {
   std::string s;
   // считывание размера матрицы смежности
   getline(input, s);
-  this->vertex_num = std::stoi(s);
+  vertex_num = std::stoi(s);
   adjacency = new std::list<int>[vertex_num];
-  this->chromatic_num = this->vertex_num;
+  chromatic_num = vertex_num;
 
   int row = 0;
   if (input.is_open()) {
@@ -21,19 +21,19 @@ Graph::Graph(const std::string& matrix_filename) {
           if (col >= row * 2) {
             // если ребро не ведет к вершине, которая уже была рассмотрена
 
-            this->adjacency[row].push_back(col / 2);
-            this->adjacency[col / 2].push_back(row);
+            adjacency[row].push_back(col / 2);
+            adjacency[col / 2].push_back(row);
           }
         }
       }
       row++;
-      this->graph_matrix.push_back(row_vector);  // добавление строки в матрицу
+      graph_matrix.push_back(row_vector);  // добавление строки в матрицу
     }
     input.close();
   }
 };
 
-// Проверка на двудольность графа
+// проверки для переборного алгоритма раскраски графа
 bool Graph::graph_color_util(int m, int v) {
   if (v == vertex_num) return true;  // если все вершины раскрашены
 
@@ -55,7 +55,7 @@ bool Graph::graph_color_util(int m, int v) {
 bool Graph::is_safe_to_color(int v, int c) {
   for (int i = 0; i < vertex_num; i++) {
     // если есть ребро и цвета совпадают
-    if (this->graph_matrix[v][i] == 1 && c == color[i]) {
+    if (graph_matrix[v][i] == 1 && c == color[i]) {
       return false;  // цвет не подходит
     }
   }
@@ -66,12 +66,12 @@ bool Graph::is_safe_to_color(int v, int c) {
 // функция для добавления цветов в вектор
 void Graph::add_colors_drawing() {
   for (int i = 0; i < vertex_num; i++) {
-    this->colored_vertices.push_back(color[i]);
+    colored_vertices.push_back(color[i]);
   }
 };
 
 // возвращает хроматическое число (максимальное число цветов)
-int Graph::chromatic_number() { return this->chromatic_num; };
+int Graph::chromatic_number() { return chromatic_num; };
 
 // поиск хроматического числа (максимального числа цветов)
 void Graph::find_chromatic_number() {
@@ -107,20 +107,20 @@ void Graph::find_chromatic_number() {
     result[u] = cr;
   }
   int max = 0;
-  for (int i = 0; i < this->vertex_num; i++) {
+  for (int i = 0; i < vertex_num; i++) {
     if (result[i] > max) {
       max = result[i];
     }
   }
 
   // присваиваем хроматическому числу максимальное число цветов
-  this->chromatic_num = max;
+  chromatic_num = max;
 };
 
 // Проверка, можно ли раскрасить граф
 bool Graph::rlf_coloring() {
-  int m = this->chromatic_num;
-  for (int i = 0; i < this->vertex_num; i++) {
+  int m = chromatic_num;
+  for (int i = 0; i < vertex_num; i++) {
     color.push_back(0);
   }
 
@@ -136,9 +136,9 @@ bool Graph::rlf_coloring() {
 
 // выводим матрицу смежности
 void Graph::print_matrix() {
-  for (int i = 0; i < this->graph_matrix.size(); i++) {
-    for (int j = 0; j < this->graph_matrix.size(); j++) {
-      std::cout << this->graph_matrix[i][j] << " ";
+  for (int i = 0; i < graph_matrix.size(); i++) {
+    for (int j = 0; j < graph_matrix.size(); j++) {
+      std::cout << graph_matrix[i][j] << " ";
     }
     std::cout << std::endl;
   }
@@ -187,7 +187,7 @@ void Graph::greedy_coloring() {
   }
 
   for (int u = 0; u < vertex_num; u++) {
-    this->colored_vertices.push_back(result[u]);
+    colored_vertices.push_back(result[u]);
   }
 };
 
@@ -202,12 +202,12 @@ void Graph::export_graph(const std::string& output_filename) {
 
     for (int u = 0; u < vertex_num; u++) {
       out << "\t" << u
-          << " [color = " << this->colors[this->colored_vertices[u]]
+          << " [color = " << colors[colored_vertices[u]]
           << std::uppercase << " label=\"" << u << "\"]\n";
     }
 
     for (int u = 0; u < vertex_num; u++) {
-      for (int i : this->adjacency[u]) {
+      for (int i : adjacency[u]) {
         if (i > u) {
           out << "\t" << u << " -- " << i << ";\n";
         }
