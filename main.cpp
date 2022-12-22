@@ -1,4 +1,4 @@
-#include "Graph_painting.h"
+#include "graph.h"
 
 using namespace std;
 
@@ -30,17 +30,16 @@ int main(int argc, char* argv[]) {
   output.close();
 
   // создание графа
-  Graph test_graph(std::atoi(argv[1]));
-  test_graph.set_matrix(argv[2]);
+  Graph test_graph(std::atoi(argv[1]), argv[2]);
   cout << "Coloring of graph" << endl;
 
   // поиск минимального количества цветов
   test_graph.greedy_coloring();
-  test_graph.chromatic_number();
+  test_graph.find_chromatic_number();
   test_graph.print_matrix();
-  test_graph.draw_graph(argv[3]);
+  test_graph.export_graph(argv[3]);
 
-  test_graph.print_chromatic_number();
+  cout << "Chromatic number: " << test_graph.chromatic_number() << endl;
 
   return 0;
 }

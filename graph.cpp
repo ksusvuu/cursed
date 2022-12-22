@@ -1,6 +1,10 @@
-#include "Graph_painting.h"
+#include "graph.h"
 
-void Graph::set_matrix(const std::string& matrix_filename) {
+Graph::Graph(int vertex_num, const std::string& matrix_filename) {
+  this->vertex_num = vertex_num;
+  adjacency = new std::list<int>[vertex_num];
+  this->chromatic_num = vertex_num;
+
   std::string s;
   std::ifstream input(matrix_filename);
   int row = 0;
@@ -25,7 +29,7 @@ void Graph::set_matrix(const std::string& matrix_filename) {
 };
 
 bool Graph::graph_color_util(int m, int v) {
-  if (v == V) {
+  if (v == vertex_num) {
     return true;
   }
 
@@ -46,7 +50,7 @@ bool Graph::graph_color_util(int m, int v) {
 }
 
 bool Graph::is_safe_to_color(int v, int c) {
-  for (int i = 0; i < V; i++) {
+  for (int i = 0; i < vertex_num; i++) {
     if (this->graph_matrix[v][i] == 1 && c == color[i]) {
       return false;
     }
@@ -55,33 +59,33 @@ bool Graph::is_safe_to_color(int v, int c) {
 };
 
 void Graph::add_colors_drawing() {
-  for (int i = 0; i < V; i++) {
+  for (int i = 0; i < vertex_num; i++) {
     this->colored_vertices.push_back(color[i]);
   }
 };
 
-void Graph::print_chromatic_number() {
-  std::cout << "Chromatic number: " << this->chromatic_num << std::endl;
+int Graph::chromatic_number() {
+  return this->chromatic_num;
 };
 
-void Graph::chromatic_number() {
-  std::vector<int> result(V);
+void Graph::find_chromatic_number() {
+  std::vector<int> result(vertex_num);
   // Присваиваем первый цвет первой вершине
   result[0] = 0;
-  // Инициализируем оставшиеся вершины V-1 как не присвоенные
-  for (int u = 1; u < V; u++) {
+  // Инициализируем оставшиеся вершины vertex_num-1 как не присвоенные
+  for (int u = 1; u < vertex_num; u++) {
     result[u] = -1;
     // Для u не присвоено ни одного цвета
   }
   // Временный массив для хранения доступных цветов. True
   // значение available[cr] будет означать, что цвет cr
   // присваивается одной из его смежных вершин
-  std::vector<bool> available(V);
-  for (int cr = 0; cr < V; cr++) {
+  std::vector<bool> available(vertex_num);
+  for (int cr = 0; cr < vertex_num; cr++) {
     available[cr] = false;
   }
-  // Назначаем цвета оставшимся вершинам V-1
-  for (int u = 1; u < V; u++) {
+  // Назначаем цвета оставшимся вершинам vertex_num-1
+  for (int u = 1; u < vertex_num; u++) {
     // Смотрим все соседние вершины и отмечаем их цвета как недоступные
     std::list<int>::iterator i;
     for (i = adjacency[u].begin(); i != adjacency[u].end(); ++i) {
@@ -92,7 +96,7 @@ void Graph::chromatic_number() {
 
     // Ищем первый доступный цвет
     int cr;
-    for (cr = 0; cr < V; cr++) {
+    for (cr = 0; cr < vertex_num; cr++) {
       if (available[cr] == false) {
         break;
       }
@@ -101,7 +105,7 @@ void Graph::chromatic_number() {
     result[u] = cr;  // Присваиваем найденный цвет
   }
   int max = 0;
-  for (int i = 0; i < this->V; i++) {
+  for (int i = 0; i < this->vertex_num; i++) {
     if (result[i] > max) {
       max = result[i];
     }
@@ -113,7 +117,7 @@ void Graph::chromatic_number() {
 bool Graph::rlf_coloring() {
   // Обозначаем все значения цвета как 0
   int m = this->chromatic_num;
-  for (int i = 0; i < this->V; i++) {
+  for (int i = 0; i < this->vertex_num; i++) {
     color.push_back(0);
   }
 
@@ -138,24 +142,24 @@ void Graph::print_matrix() {
 
 // Присваивание цветов
 void Graph::greedy_coloring() {
-  std::vector<int> result(V);
+  std::vector<int> result(vertex_num);
   // Присваиваем первый цвет первой вершине
   result[0] = 0;
-  // Назначаем цвета оставшимся вершинам V-1
-  for (int u = 1; u < V; u++) {
+  // Назначаем цвета оставшимся вершинам vertex_num-1
+  for (int u = 1; u < vertex_num; u++) {
     result[u] = -1;
     // Никакой цвет не присвоен u
   }
   // Временный массив для хранения доступных цветов. True
   // значение available[cr] будет означать, что цвет cr
   // присваивается одной из его смежных вершин
-  std::vector<bool> available(V);
-  for (int cr = 0; cr < V; cr++) {
+  std::vector<bool> available(vertex_num);
+  for (int cr = 0; cr < vertex_num; cr++) {
     available[cr] = false;
   }
-  // Присваиваем цвет оставшимся V-1 вершинам
-  for (int u = 1; u < V; u++) {
-  // Смотрим все соседние вершины и отмечаем их цвета как недоступные
+  // Присваиваем цвет оставшимся vertex_num-1 вершинам
+  for (int u = 1; u < vertex_num; u++) {
+    // Смотрим все соседние вершины и отмечаем их цвета как недоступные
     std::list<int>::iterator i;
     for (i = adjacency[u].begin(); i != adjacency[u].end(); ++i) {
       if (result[*i] != -1) {
@@ -165,7 +169,7 @@ void Graph::greedy_coloring() {
 
     // Ищем первый доступный цвет
     int cr;
-    for (cr = 0; cr < V; cr++) {
+    for (cr = 0; cr < vertex_num; cr++) {
       if (available[cr] == false) {
         break;
       }
@@ -180,12 +184,12 @@ void Graph::greedy_coloring() {
     }
   }
 
-  for (int u = 0; u < V; u++) {
+  for (int u = 0; u < vertex_num; u++) {
     this->colored_vertices.push_back(result[u]);
   }
 };
 
-void Graph::draw_graph(const std::string& output_filename) {
+void Graph::export_graph(const std::string& output_filename) {
   std::ofstream out;
   out.open(output_filename);
 
@@ -193,13 +197,13 @@ void Graph::draw_graph(const std::string& output_filename) {
     out << "graph Graph_coloring { \n\tnode [shape=circle width=0.66 "
            "style=filled]\n";
 
-    for (int u = 0; u < V; u++) {
+    for (int u = 0; u < vertex_num; u++) {
       out << "\t" << u
           << " [color = " << this->colors[this->colored_vertices[u]]
           << std::uppercase << " label=\"" << u << "\"]\n";
     }
 
-    for (int u = 0; u < V; u++) {
+    for (int u = 0; u < vertex_num; u++) {
       for (int i : this->adjacency[u]) {
         if (i > u) {
           out << "\t" << u << " -- " << i << ";\n";
