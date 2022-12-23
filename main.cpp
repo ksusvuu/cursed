@@ -5,11 +5,11 @@
 using namespace std;
 
 // формат аргументов командной строки:
-// ./graph_painting input_file output_file [bruteforce/greedy]
+// ./graph_painting input_file output_file [-b/-g]
 // ./graph_painting input.txt output.txt bruteforce
 
-// bruteforce - перебор всех цветов
-// greedy - жадный алгоритм
+// -b (bruteforce) - перебор всех цветов
+// -g (greedy) - жадный алгоритм
 
 int main(int argc, char* argv[]) {
   // проверка на количество аргументов
@@ -26,20 +26,23 @@ int main(int argc, char* argv[]) {
   }
   input.close();
 
+  // создание графа
   Graph test_graph(argv[1]);
 
   cout << "Coloring of graph" << endl;
 
   // проверка на правильность аргумента
-  if (strcmp(argv[3], "bruteforce") == 0) {
+  // и вызов соответствующего метода
+  if (!strcmp(argv[3], "-b")) {
     test_graph.graph_coloring();
-  } else if (strcmp(argv[3], "greedy") == 0) {
+  } else if (!strcmp(argv[3], "-g")) {
     test_graph.greedy_coloring();
   } else {
     cout << "Wrong argument" << endl;
     return 1;
   }
 
+  // экспорт графа в файл graphviz
   test_graph.export_graph(argv[2]);
 
   return 0;

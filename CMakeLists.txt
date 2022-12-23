@@ -5,4 +5,4 @@ cmake_minimum_required(VERSION 3.0)
 project(graph_colorer)
 
 # add the executable
-add_executable(graph_colorer main.cpp graph.h)
+add_executable(graph_colorer main.cpp graph.cpp graph.h)
