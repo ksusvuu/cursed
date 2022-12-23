@@ -1,66 +1,27 @@
 #include "graph.h"
 
+#include <fstream>
+#include <iostream>
+
+using namespace std;
+
 // конструктор
+// принимает на вход имя файла с матрицей смежности
+// считывает матрицу смежности из файла
+// конвертирует матрицу смежности в список смежности
+// инициализирует массив цветов вершин
+// инициализирует хроматическое число
 Graph::Graph(const std::string& matrix_filename) {
   std::ifstream input(matrix_filename);
+  // проверка на существование входного файла
+  if (!input.is_open()) {
+    std::cout << "File not found" << std::endl;
+    throw std::invalid_argument("File not found");
+  }
   std::string s;
   // считывание размера матрицы смежности
   getline(input, s);
-  vertex_num = std::stoi(s);
-  adjacency = new std::list<int>[vertex_num];
-  chromatic_num = vertex_num;
 
-  int row = 0;
-  if (input.is_open()) {
-    while (getline(input, s)) {
-      std::vector<int> row_vector;  // вектор для хранения строки
-      for (int col = 0; col < s.size(); col += 2) {
-        // добавление в вектор элемента строки
-        row_vector.push_back(std::stoi(s.substr(col, 1)));
-        if (std::stoi(s.substr(col, 1)) == 1) {
-          if (col >= row * 2) {
-            // если ребро не ведет к вершине, которая уже была рассмотрена
-
-            adjacency[row].push_back(col / 2);
-            adjacency[col / 2].push_back(row);
-          }
-        }
-      }
-      row++;
-      graph_matrix.push_back(row_vector);  // добавление строки в матрицу
-    }
-    input.close();
-  }
-};
-
-// проверки для переборного алгоритма раскраски графа
-bool Graph::graph_color_util(int m, int v) {
-  if (v == vertex_num) return true;  // если все вершины раскрашены
-
-  for (int i = 1; i <= m; i++) {
-    // Проверка, можно ли присвоить цвет i этой вершине
-    if (is_safe_to_color(v, i)) {
-      color[v] = i;
-      // рекурсия для проверки следующих вершин
-      if (graph_color_util(m, v + 1)) return true;
-      // если цвет не приводит к решению
-      color[v] = 0;
-    }
-  }
-
-  return false;  // не удалось раскрасить граф
-}
-
-// Проверка, можно ли присвоить цвет i этой вершине
-bool Graph::is_safe_to_color(int v, int c) {
-  for (int i = 0; i < vertex_num; i++) {
-    // если есть ребро и цвета совпадают
-    if (graph_matrix[v][i] == 1 && c == color[i]) {
-      return false;  // цвет не подходит
-    }
-  }
-
-  return true;
 };
 
 // функция для добавления цветов в вектор
