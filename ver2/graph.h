@@ -6,6 +6,9 @@
 #include <string>
 #include <vector>
 
+const std::string rainbow[8] = {"#dd71e5", "#3AE6CA", "#ffef6b", "#0c77ff",
+                                "#e34557", "#b8ea59", "#da9062", "#6356ef"};
+
 class Graph {
  private:
   int vertex_count;        // количество вершин
@@ -142,6 +145,9 @@ class Graph {
 
     // вывод хроматического числа
     std::cout << "Chromatic number: " << chromatic_num << std::endl;
+
+    // записываем раскраску в массив
+    color = best_color;
   }
 
   // жадный алгоритм раскраски графа
@@ -208,9 +214,30 @@ class Graph {
     }
     chromatic_num++;
 
-    std::cout << "Chromatic number: " << chromatic_num << std::endl;    
+    std::cout << "Chromatic number: " << chromatic_num << std::endl;
+
+    // записываем раскраску в массив
+    color = current_color;
   }
 
   // экспорт в файл .dot (для отрисовки графа в graphviz)
-  void export_graph(const std::string& output_filename);
+  void export_graph(const std::string& output_filename) {
+    std::ofstream output(output_filename);
+    output << "graph G {" << std::endl;
+    output << "\tnode [shape=circle style=filled]" << std::endl;
+    // выводим цвета вершин
+    for (int i = 0; i < vertex_count; ++i) {
+      output << '\t' << i;
+      output << " [color=\"" << rainbow[color[i]] << "\"]" << std::endl;
+    }
+    // выводим все ребра графа (до главной диагонали)
+    for (int i = 0; i < vertex_count; ++i) {
+      for (int j = 0; j < i; ++j) {
+        if (graph_matrix[i][j]) {
+          output << '\t' << i << " -- " << j << ";\n";
+        }
+      }
+    }
+    output << "}" << std::endl;
+  }
 };
