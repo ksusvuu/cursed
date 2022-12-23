@@ -46,8 +46,9 @@ Graph::Graph(const string& filename) {
   chromatic_num = vertex_count;
 }
 
+// вывод матрицы смежности и списка смежности
 void Graph::debug() {
-  // вывод матрицы смежности и списка смежности
+  // вывод матрицы смежности
   cout << "Matrix:" << endl;
   for (int i = 0; i < vertex_count; ++i) {
     for (int j = 0; j < vertex_count; ++j) {
@@ -56,6 +57,7 @@ void Graph::debug() {
     cout << endl;
   }
 
+  // вывод списка смежности
   cout << endl << "List:" << endl;
   for (int i = 0; i < vertex_count; ++i) {
     cout << i << ": ";
@@ -72,10 +74,10 @@ void Graph::debug() {
 
 void Graph::graph_coloring() {
   // массив для хранения текущей раскраски
-  std::vector<int> current_color(vertex_count, 0);
+  vector<int> current_color(vertex_count, 0);
 
   // массив для хранения наилучшей раскраски
-  std::vector<int> best_color(vertex_count, 0);
+  vector<int> best_color(vertex_count, 0);
 
   // перебор всех возможных раскрасок графа
   while (true) {
@@ -95,10 +97,12 @@ void Graph::graph_coloring() {
     if (is_correct) {
       int current_chromatic_num = 0;
       for (int i = 0; i < vertex_count; ++i) {
+        // поиск максимального цвета в раскраске
         if (current_color[i] > current_chromatic_num) {
           current_chromatic_num = current_color[i];
         }
       }
+      // если текущая раскраска лучше, чем наилучшая, то заменяем ее
       if (current_chromatic_num < chromatic_num) {
         chromatic_num = current_chromatic_num;
         best_color = current_color;
@@ -110,24 +114,26 @@ void Graph::graph_coloring() {
     while (i < vertex_count && current_color[i] == chromatic_num) {
       current_color[i++] = 0;
     }
+    // если все раскраски перебраны, то завершаем работу алгоритма
     if (i == vertex_count) break;
     ++current_color[i];
   }
 
   // вывод наилучшей раскраски
-  std::cout << "Best coloring:" << std::endl;
+  cout << "Best coloring:" << endl;
   for (int i = 0; i < vertex_count; ++i) {
-    std::cout << i << ": " << best_color[i] << std::endl;
+    cout << "Edge " << i << ": color ";
+    cout << best_color[i] << endl;
   }
-
-  // устанавливаем хроматическое число
-  chromatic_num++;
-
-  // вывод хроматического числа
-  std::cout << "Chromatic number: " << chromatic_num << std::endl;
 
   // записываем раскраску в массив
   color = best_color;
+
+  // устанавливаем хроматическое число
+  chromatic_num++;  // на 1 больше т.к. цвета нумеруются с 0
+
+  // вывод хроматического числа
+  cout << "Chromatic number: " << chromatic_num << endl;
 }
 
 // жадный алгоритм раскраски графа
@@ -135,7 +141,7 @@ void Graph::graph_coloring() {
 
 void Graph::greedy_coloring() {
   // массив, в котором будет храниться текущая раскраска графа
-  std::vector<int> current_color(vertex_count, 0);
+  vector<int> current_color(vertex_count, 0);
 
   // массив, в котором будет храниться минимальный цвет, который еще не
   // использовался
@@ -145,7 +151,7 @@ void Graph::greedy_coloring() {
   for (int i = 0; i < vertex_count; ++i) {
     // массив, в котором будет храниться информация о том, какие цвета
     // используются у соседей вершины i
-    std::vector<bool> used_color(chromatic_num + 1, false);
+    vector<bool> used_color(chromatic_num + 1, false);
 
     // перебор всех соседей вершины i
     for (int j = 0; j < graph_list[i].size(); ++j) {
@@ -168,30 +174,32 @@ void Graph::greedy_coloring() {
   }
 
   // вывод текущей раскраски графа
-  std::cout << "Current coloring:" << std::endl;
+  cout << "Current coloring:" << endl;
   for (int i = 0; i < vertex_count; ++i) {
-    std::cout << i << ": " << current_color[i] << std::endl;
+    cout << "Edge " << i << ": color ";
+    cout << current_color[i] << endl;
   }
+
+  // записываем раскраску в массив
+  color = current_color;
 
   // ищем хроматическое число
   chromatic_num = 0;
   for (int i = 0; i < vertex_count; ++i) {
-    chromatic_num = std::max(chromatic_num, current_color[i]);
+    chromatic_num = max(chromatic_num, color[i]);
   }
-  chromatic_num++;
+  chromatic_num++;  // на 1 больше т.к. цвета нумеруются с 0
 
-  std::cout << "Chromatic number: " << chromatic_num << std::endl;
-
-  // записываем раскраску в массив
-  color = current_color;
+  cout << "Chromatic number: " << chromatic_num << endl;
 }
 
 // экспорт в файл .dot (для отрисовки графа в graphviz)
 
-void Graph::export_graph(const std::string& filename) {
-  std::ofstream output(filename);
-  output << "graph G {" << std::endl;
-  output << "\tnode [shape=circle style=filled]" << std::endl;
+void Graph::export_graph(const string& filename) {
+  ofstream output(filename);
+  // выводим заголовок
+  output << "graph G {" << endl;
+  output << "\tnode [shape=circle style=filled]" << endl;
   // выводим цвета вершин
   for (int i = 0; i < vertex_count; ++i) {
     output << '\t' << i;
@@ -205,5 +213,5 @@ void Graph::export_graph(const std::string& filename) {
       }
     }
   }
-  output << "}" << std::endl;
+  output << "}" << endl;
 }
